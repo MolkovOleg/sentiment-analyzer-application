@@ -1,0 +1,13 @@
+FROM maven:3.9-eclipse-temurin-21 AS buid
+WORKDIR /app
+COPY pom.xml .
+RUN mvn -B dependency:go-offline
+COPY src ./src
+RUN mvn -B package -DskipTests
+
+FROM bellsoft/liberica-openjre-alpine-musl:21
+WORKDIR /app
+COPY --from=buid /app/target/sentiment-analyzer-application-0.0.1-SNAPSHOT.jar app.jar
+ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
+EXPOSE 8080
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]
