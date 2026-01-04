@@ -17,3 +17,10 @@ spec:
                 name: sentiment-service
                 port:
                   name: http
+          - path: /actuator
+            pathType: Prefix
+            backend:
+              service:
+                name: sentiment-service
+                port:
+                  name: http
